@@ -1,0 +1,40 @@
+# Skeleton of a terraform/anislbe project with GitLab-ci/runner 
+image:
+  name: zyker/toolbox:v0.0.2
+
+# Default output file for Terraform plan
+variables:
+  PLAN: plan.tfplan
+
+cache:
+  paths:
+    - .terraform
+
+before_script:
+  - terraform --version
+  - terraform init
+  
+stages:
+  - build
+  - deploy
+
+plan:
+  stage: build
+  script:
+    - terraform plan -out=$PLAN
+  artifacts:
+    name: plan
+    paths:
+      - $PLAN
+apply:
+  stage: deploy
+  environment:
+    name: production
+  script:
+    - terraform apply -input=false $PLAN
+  dependencies:
+    - plan
+  when: manual
+  only:
+    - master
+
