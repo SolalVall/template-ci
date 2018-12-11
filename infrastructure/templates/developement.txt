@@ -1,16 +1,75 @@
 provider "aws" {
+	#Credentials and region set in configuration directory
 }
+
+#######################################
+#               SSH KEY               #
+#######################################
+
+resource "aws_key_pair" "{{ ssh_key__name }}" {
+  key_name   = "{{ ssh_key__key_name }}"
+  public_key = "{{ ssh_key__public_key }}" 
+}
+
+#######################################
+#          EC2 INSTANCE(S)            #
+#######################################
 
 {% for instance in instances %}
 resource "aws_instance" "{{ instance.name }}" {
-  ami           							= "{{ instance.ami }}"
-  instance_type 							= "{{ instance.instance_type }}"
-  subnet_id 									= "${aws_subnet.{{ instance.subnet_name}}.id}"
-  key_name 										= "${aws_key_pair.{{ instance.ssk_key_name }}.key_name}"
-  vpc_security_group_ids 			= ["${aws_security_group.{{ security_group_name }}.id}"]
+  ami                         = "{{ instance.ami }}"
+  instance_type               = "{{ instance.instance_type }}"
+  subnet_id                   = "${aws_subnet.{{ instance.subnet_name}}.id}"
+  key_name                    = "${aws_key_pair.{{ ssh_key__key_name }}.key_name}"
+  vpc_security_group_ids      = ["${aws_security_group.{{ instance.security_group_name }}.id}"]
   associate_public_ip_address = {{ instance.enable_public_ip }}
   tags {
     Name = "{{ instance.tags}}"
   }
+}
+{% endfor %}
+
+
+#######################################
+#            EC2 SUBNET(S)            #
+#######################################
+
+{% for subnet in subnets %}
+resource "aws_subnet" "{{ subnet.name }}" {
+  vpc_id = "${aws_vpc.{{ vpc_name }}.id}"
+  cidr_block = "{{ subnet.cidr_block }}"
+  availability_zone = "{{ subnet.availability_zone }}"
+  tags {
+    Name = "{{ subnet.tags }}"
+  }
+}
+{% endfor %}
+
+#######################################
+#        EC2 ROUTE TABLE(S)           #
+#######################################
+
+{% for route_table in route_tables %}
+resource "aws_route_table" "{{ route_table.name }}" {
+  vpc_id = "${aws_vpc.{{ vpc_name }}.id}"
+
+  route {
+    cidr_block = "{{ route_table.cidr_block }}"
+    {{ route_table.gateway_type }}_id = "${aws_internet_gateway.default.id}"
+  }
+  tags {
+    Name = "{{ route_table.tags }}"
+  }
+}
+{% endfor %}
+
+#######################################
+#      EC2 ROUTE ASSOCIATION(S)       #
+#######################################
+
+{% for route_table in route_tables %}
+resource "aws_route_table_association" "{{ route_table.name }}-association" {
+  subnet_id = "${aws_subnet.{{ route_table.subnet }}.id}"
+  route_table_id = "${aws_route_table.{{ route_table.name }}.id}"
 }
 {% endfor %}

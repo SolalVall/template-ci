@@ -1,17 +1,46 @@
+vpc_name: foo-vpc
+
+ssh_key__name: deployer
+ssh_key__key_name: deployer-key
+ssh_key__public_key: ssh-rsa ******
+
 instances:
   - name: foo
-    ami: foo
+    ami: ami-123
     instance_type: t2.micro
-    subnet_name: dev-public
-    ssh_key_name: foo-ssh
+    subnet_name: foo-public-subnet
     security_group_name: https 
     enable_public_ip: false
     tags: Developement Front Server
   - name: foo-private
-    ami: foo
+    ami: ami-123
     instance_type: t2.micro
-    subnet_name: dev-private
-    ssh_key_name: bar-ssh
+    subnet_name: foo-private-subnet
     security_group_name: oracle
     enable_public_ip: true
     tags: Developement Back Server
+
+subnets:
+  - name: foo-public-subnet
+    cidr_block: 10.0.0.1/24
+    availability_zone: eu-west-1a
+    tags: Developement Public Subnet
+  - name: foo-private-subnet
+    cidr_block: 10.0.0.2/24
+    availability_zone: eu-west-1a
+    tags: Developement Private Subnet
+
+route_tables:
+  - name: foo-public-route
+    subnet: foo-public-subnet
+    cidr_block: 0.0.0.0/0
+    gateway_type: gateway
+    tags: Public Route Table
+  - name: foo-private-route
+    subnet: foo-private-subnet
+    cidr_block: 0.0.0.0/0
+    gateway_type: nat_gateway
+    tags: Private Route Table
+
+
+

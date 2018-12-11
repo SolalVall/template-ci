@@ -3,11 +3,11 @@ provider "aws" {
 
 {% for instance in instances %}
 resource "aws_instance" "{{ instance.name }}" {
-  ami           							= "{{ instance.ami }}"
-  instance_type 							= "{{ instance.instance_type }}"
-  subnet_id 									= "${aws_subnet.{{ instance.subnet_name}}.id}"
-  key_name 										= "${aws_key_pair.{{ instance.ssk_key_name }}.key_name}"
-  vpc_security_group_ids 			= ["${aws_security_group.{{ security_group_name }}.id}"]
+  ami                         = "{{ instance.ami }}"
+  instance_type               = "{{ instance.instance_type }}"
+  subnet_id                   = "${aws_subnet.{{ instance.subnet_name}}.id}"
+  key_name                    = "${aws_key_pair.{{ instance.ssk_key_name }}.key_name}"
+  vpc_security_group_ids      = ["${aws_security_group.{{ instance.security_group_name }}.id}"]
   associate_public_ip_address = {{ instance.enable_public_ip }}
   tags {
     Name = "{{ instance.tags}}"
