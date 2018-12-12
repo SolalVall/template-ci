@@ -5,7 +5,7 @@ instances:
     subnet_name: prod-public
     ssh_key_name: foo-ssh
     security_group_name: https 
-    enable_public_ip: false
+    enable_public_ip: 'false'
     tags: Prod Front Server
   - name: foo-private
     ami: foo
@@ -13,5 +13,5 @@ instances:
     subnet_name: prod-private
     ssh_key_name: bar-ssh
     security_group_name: oracle
-    enable_public_ip: true
+    enable_public_ip: 'true'
     tags: Prod Back Server

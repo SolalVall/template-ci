@@ -10,14 +10,14 @@ instances:
     instance_type: t2.micro
     subnet_name: foo-public-subnet
     security_group_name: https 
-    enable_public_ip: false
+    enable_public_ip: 'false'
     tags: Developement Front Server
   - name: foo-private
     ami: ami-123
     instance_type: t2.micro
     subnet_name: foo-private-subnet
     security_group_name: oracle
-    enable_public_ip: true
+    enable_public_ip: 'true'
     tags: Developement Back Server
 
 subnets:

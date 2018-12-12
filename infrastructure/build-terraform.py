@@ -3,34 +3,40 @@ from jinja2 import Environment, FileSystemLoader
 import yaml, sys, getopt
 
 def main(argv):
-    input_env_file = ''
-    output_env_file = ''
+    terraform_template_dir_location = Environment(loader = FileSystemLoader('./templates'), trim_blocks=True, lstrip_blocks=True)
+
     help_message = """
 USAGE: python build-terraform.py -i <env-vars.yml> -e <env-template.txt> -o <env-configuration.tf>
 
 This command allow you to create a terraform configuration file on AWS inside a VPC.It is based on a jinja template and a YAML file for EC2 variables configuration.
 
-You have to insert:
-- valid YAML environnement vars file (INPUT) [in variables directory]
-- valid Jinja terraform template file (INPUT) [in templates directory]
-- valid terraform environennement file (OUTPUT)
+OPTIONS:
 
-Exemple:
-- Basic Usage:
+    -i or --input-vars = valid YAML environnement vars file (INPUT) [in variables directory]
+    -e or --environnement-template = valid Jinja terraform template file (INPUT) [in templates directory]
+    -o or --output-file = file with terraform extension 'foo.tf' (OUTPUT)
+
+EXEMPLES:
+
+    - Basic Usage:
 
     python build-terraform.py -i env-production.yml -e env-production.txt -o env-production.tf
 
-- For help:
+    - For help:
 
     python build-terraform.py -h
     """
-    terraform_template_dir_location = Environment(loader = FileSystemLoader('./templates'), trim_blocks=True, lstrip_blocks=True)
 
     try:
-        opts, args = getopt.getopt(argv,"hi:e:o:",["input-vars=","environnement-template=","outputfil="])
+        opts, args = getopt.getopt(argv,"hi:e:o:",["input-vars=","environnement-template=","outputfile="])
     except getopt.GetoptError:
         print help_message
         sys.exit(2)
+
+    #if no arguments
+    if opts == []:
+        print help_message
+
     #if some arguments
     for opt, arg in opts:
         if opt == '-h':
@@ -51,5 +57,5 @@ Exemple:
                 fh.write(env_terraform_file)
 
 if __name__ == "__main__":
-    #Pass to main function the first to len(sys.argv) parameter
+    #Pass to main function the first command parameter to len(sys.argv) command parameter
     main(sys.argv[1:])

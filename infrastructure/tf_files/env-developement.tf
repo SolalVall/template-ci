@@ -21,7 +21,7 @@ resource "aws_instance" "foo" {
   subnet_id                   = "${aws_subnet.foo-public-subnet.id}"
   key_name                    = "${aws_key_pair.deployer-key.key_name}"
   vpc_security_group_ids      = ["${aws_security_group.https.id}"]
-  associate_public_ip_address = False
+  associate_public_ip_address = false
   tags {
     Name = "Developement Front Server"
   }
@@ -32,7 +32,7 @@ resource "aws_instance" "foo-private" {
   subnet_id                   = "${aws_subnet.foo-private-subnet.id}"
   key_name                    = "${aws_key_pair.deployer-key.key_name}"
   vpc_security_group_ids      = ["${aws_security_group.oracle.id}"]
-  associate_public_ip_address = True
+  associate_public_ip_address = true
   tags {
     Name = "Developement Back Server"
   }
