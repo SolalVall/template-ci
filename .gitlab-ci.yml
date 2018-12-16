@@ -1,6 +1,6 @@
 # Skeleton of a terraform/anislbe project with GitLab-ci/runner 
 image:
-  name: zyker/toolbox:v0.0.2
+  name: zyker/toolbox:v0.0.3
 
 # Default output file for Terraform plan
 variables:
@@ -11,7 +11,13 @@ cache:
     - .terraform
 
 before_script:
-  - terraform --version
+  - mkdir ~/.aws
+  - cp configuration/* ~/.aws
+  - cd infrastructure
+  - python build-terraform.py -i env-developement.yml -e env-developement.txt -o env-developement.tf
+  - mkdir /opt-gitlab-runner
+  - cp tf_files/env-developement.tf /opt-gitlab-runner
+  - cd /opt-gitlab-runner
   - terraform init
   
 stages:

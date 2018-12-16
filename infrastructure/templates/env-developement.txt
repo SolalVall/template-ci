@@ -20,7 +20,7 @@ resource "aws_instance" "{{ instance.name }}" {
   ami                         = "{{ instance.ami }}"
   instance_type               = "{{ instance.instance_type }}"
   subnet_id                   = "${aws_subnet.{{ instance.subnet_name}}.id}"
-  key_name                    = "${aws_key_pair.{{ ssh_key__key_name }}.key_name}"
+  key_name                    = "${aws_key_pair.{{ ssh_key__name }}.key_name}"
   vpc_security_group_ids      = ["${aws_security_group.{{ instance.security_group_name }}.id}"]
   associate_public_ip_address = {{ instance.enable_public_ip }}
   tags {
@@ -36,7 +36,7 @@ resource "aws_instance" "{{ instance.name }}" {
 
 {% for subnet in subnets %}
 resource "aws_subnet" "{{ subnet.name }}" {
-  vpc_id = "${aws_vpc.{{ vpc_name }}.id}"
+  vpc_id = "{{ vpc_id }}"
   cidr_block = "{{ subnet.cidr_block }}"
   availability_zone = "{{ subnet.availability_zone }}"
   tags {
@@ -51,11 +51,11 @@ resource "aws_subnet" "{{ subnet.name }}" {
 
 {% for route_table in route_tables %}
 resource "aws_route_table" "{{ route_table.name }}" {
-  vpc_id = "${aws_vpc.{{ vpc_name }}.id}"
+  vpc_id = "{{ vpc_id }}"
 
   route {
     cidr_block = "{{ route_table.cidr_block }}"
-    {{ route_table.gateway_type }}_id = "${aws_internet_gateway.default.id}"
+    {{ route_table.gateway_type }}_id = "{{ internet_gateway_id }}"
   }
   tags {
     Name = "{{ route_table.tags }}"

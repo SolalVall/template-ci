@@ -1,4 +1,5 @@
-vpc_name: foo-vpc
+vpc_id: vpc-***
+internet_gateway_id: ig-***
 
 ssh_key__name: deployer
 ssh_key__key_name: deployer-key
